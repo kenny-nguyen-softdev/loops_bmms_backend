@@ -1,3 +1,1228 @@
+-- public."SequelizeMeta" definition
+
+-- Drop table
+
+-- DROP TABLE public."SequelizeMeta";
+
+CREATE TABLE public."SequelizeMeta" (
+	"name" varchar(255) NOT NULL,
+	CONSTRAINT "SequelizeMeta_pkey" PRIMARY KEY (name)
+);
+
+
+-- public.brands definition
+
+-- Drop table
+
+-- DROP TABLE public.brands;
+
+CREATE TABLE public.brands (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"isActive" bool NULL DEFAULT true,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT brands_pkey PRIMARY KEY (id)
+);
+
+
+-- public.customer_groups definition
+
+-- Drop table
+
+-- DROP TABLE public.customer_groups;
+
+CREATE TABLE public.customer_groups (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT customer_groups_pkey PRIMARY KEY (id)
+);
+
+
+-- public.debt_types definition
+
+-- Drop table
+
+-- DROP TABLE public.debt_types;
+
+CREATE TABLE public.debt_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT debt_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.delivery_methods definition
+
+-- Drop table
+
+-- DROP TABLE public.delivery_methods;
+
+CREATE TABLE public.delivery_methods (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT delivery_methods_pkey PRIMARY KEY (id)
+);
+
+
+-- public.delivery_partner_groups definition
+
+-- Drop table
+
+-- DROP TABLE public.delivery_partner_groups;
+
+CREATE TABLE public.delivery_partner_groups (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT delivery_partner_groups_pkey PRIMARY KEY (id)
+);
+
+
+-- public.loss_reasons definition
+
+-- Drop table
+
+-- DROP TABLE public.loss_reasons;
+
+CREATE TABLE public.loss_reasons (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT loss_reasons_pkey PRIMARY KEY (id)
+);
+
+
+-- public.payment_methods definition
+
+-- Drop table
+
+-- DROP TABLE public.payment_methods;
+
+CREATE TABLE public.payment_methods (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT payment_methods_pkey PRIMARY KEY (id)
+);
+
+
+-- public.person_group_types definition
+
+-- Drop table
+
+-- DROP TABLE public.person_group_types;
+
+CREATE TABLE public.person_group_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT person_group_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.provinces definition
+
+-- Drop table
+
+-- DROP TABLE public.provinces;
+
+CREATE TABLE public.provinces (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	code varchar(255) NULL,
+	CONSTRAINT provinces_pkey PRIMARY KEY (id)
+);
+
+
+-- public.size_units definition
+
+-- Drop table
+
+-- DROP TABLE public.size_units;
+
+CREATE TABLE public.size_units (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT size_units_pkey PRIMARY KEY (id)
+);
+
+
+-- public.specification_types definition
+
+-- Drop table
+
+-- DROP TABLE public.specification_types;
+
+CREATE TABLE public.specification_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT specification_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.status_types definition
+
+-- Drop table
+
+-- DROP TABLE public.status_types;
+
+CREATE TABLE public.status_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT status_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.supplier_groups definition
+
+-- Drop table
+
+-- DROP TABLE public.supplier_groups;
+
+CREATE TABLE public.supplier_groups (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT supplier_groups_pkey PRIMARY KEY (id)
+);
+
+
+-- public.tax_types definition
+
+-- Drop table
+
+-- DROP TABLE public.tax_types;
+
+CREATE TABLE public.tax_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT tax_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.unit_types definition
+
+-- Drop table
+
+-- DROP TABLE public.unit_types;
+
+CREATE TABLE public.unit_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT unit_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.voucher_group_types definition
+
+-- Drop table
+
+-- DROP TABLE public.voucher_group_types;
+
+CREATE TABLE public.voucher_group_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT voucher_group_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.voucher_types definition
+
+-- Drop table
+
+-- DROP TABLE public.voucher_types;
+
+CREATE TABLE public.voucher_types (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT voucher_types_pkey PRIMARY KEY (id)
+);
+
+
+-- public.categories definition
+
+-- Drop table
+
+-- DROP TABLE public.categories;
+
+CREATE TABLE public.categories (
+	id serial4 NOT NULL,
+	"categoryId" int4 NULL,
+	"name" varchar(255) NULL,
+	"isActive" bool NULL DEFAULT true,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT categories_pkey PRIMARY KEY (id),
+	CONSTRAINT "categories_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES public.categories(id)
+);
+
+-- Table Triggers
+
+create trigger before_insert_update_category before
+insert
+    or
+update
+    on
+    public.categories for each row execute function check_category_depth();
+
+
+-- public.districts definition
+
+-- Drop table
+
+-- DROP TABLE public.districts;
+
+CREATE TABLE public.districts (
+	id serial4 NOT NULL,
+	"provinceId" int4 NULL,
+	"name" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	prefix varchar(255) NULL,
+	CONSTRAINT districts_pkey PRIMARY KEY (id),
+	CONSTRAINT "districts_provinceId_fkey" FOREIGN KEY ("provinceId") REFERENCES public.provinces(id)
+);
+
+
+-- public.statuses definition
+
+-- Drop table
+
+-- DROP TABLE public.statuses;
+
+CREATE TABLE public.statuses (
+	id serial4 NOT NULL,
+	"statusTypeId" int4 NULL,
+	"name" varchar(255) NULL,
+	"key" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT statuses_pkey PRIMARY KEY (id),
+	CONSTRAINT "statuses_statusTypeId_fkey" FOREIGN KEY ("statusTypeId") REFERENCES public.status_types(id)
+);
+
+
+-- public.taxes definition
+
+-- Drop table
+
+-- DROP TABLE public.taxes;
+
+CREATE TABLE public.taxes (
+	id serial4 NOT NULL,
+	"taxTypeId" int4 NULL,
+	"name" varchar(255) NULL,
+	code varchar(255) NULL,
+	"percentageNumber" int4 NOT NULL DEFAULT 0,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT taxes_pkey PRIMARY KEY (id),
+	CONSTRAINT "taxes_taxTypeId_fkey" FOREIGN KEY ("taxTypeId") REFERENCES public.tax_types(id)
+);
+
+
+-- public.units definition
+
+-- Drop table
+
+-- DROP TABLE public.units;
+
+CREATE TABLE public.units (
+	id serial4 NOT NULL,
+	"unitTypeId" int4 NULL,
+	"name" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT units_pkey PRIMARY KEY (id),
+	CONSTRAINT "units_unitTypeId_fkey" FOREIGN KEY ("unitTypeId") REFERENCES public.unit_types(id)
+);
+
+
+-- public.users definition
+
+-- Drop table
+
+-- DROP TABLE public.users;
+
+CREATE TABLE public.users (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	username varchar(255) NULL,
+	email varchar(255) NOT NULL,
+	"password" varchar(255) NULL,
+	"privateImage" text NULL,
+	"isActive" bool NULL DEFAULT true,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"personGroupTypeId" int4 NULL,
+	CONSTRAINT users_email_key UNIQUE (email),
+	CONSTRAINT users_pkey PRIMARY KEY (id),
+	CONSTRAINT "users_personGroupTypeId_fkey" FOREIGN KEY ("personGroupTypeId") REFERENCES public.person_group_types(id)
+);
+
+
+-- public.voucher_groups definition
+
+-- Drop table
+
+-- DROP TABLE public.voucher_groups;
+
+CREATE TABLE public.voucher_groups (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	code varchar(255) NULL,
+	description text NULL,
+	"voucherGroupTypeId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT voucher_groups_pkey PRIMARY KEY (id),
+	CONSTRAINT "voucher_groups_voucherGroupTypeId_fkey" FOREIGN KEY ("voucherGroupTypeId") REFERENCES public.voucher_group_types(id)
+);
+
+
+-- public.wards definition
+
+-- Drop table
+
+-- DROP TABLE public.wards;
+
+CREATE TABLE public.wards (
+	id serial4 NOT NULL,
+	"districtId" int4 NULL,
+	"name" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	prefix varchar(255) NULL,
+	CONSTRAINT wards_pkey PRIMARY KEY (id),
+	CONSTRAINT "wards_districtId_fkey" FOREIGN KEY ("districtId") REFERENCES public.districts(id)
+);
+
+
+-- public.combos definition
+
+-- Drop table
+
+-- DROP TABLE public.combos;
+
+CREATE TABLE public.combos (
+	id serial4 NOT NULL,
+	"categoryId" int4 NULL,
+	"brandId" int4 NULL,
+	sku varchar(255) NULL,
+	barcode varchar(255) NULL,
+	"name" varchar(255) NULL,
+	description text NULL,
+	"costPrice" int8 NULL,
+	"salePrice" int8 NULL,
+	"wholesalePrice" int8 NULL,
+	"standardUnit" varchar(255) NULL,
+	weight numeric(10, 2) NULL,
+	"weightUnitId" int4 NULL,
+	"isActive" bool NULL DEFAULT true,
+	"isConsistOfSalePrice" bool NULL DEFAULT true,
+	"inputTaxId" int4 NULL,
+	"outputTaxId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT combos_pkey PRIMARY KEY (id),
+	CONSTRAINT "combos_brandId_fkey" FOREIGN KEY ("brandId") REFERENCES public.brands(id),
+	CONSTRAINT "combos_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES public.categories(id),
+	CONSTRAINT "combos_inputTaxId_fkey" FOREIGN KEY ("inputTaxId") REFERENCES public.taxes(id),
+	CONSTRAINT "combos_outputTaxId_fkey" FOREIGN KEY ("outputTaxId") REFERENCES public.taxes(id),
+	CONSTRAINT "combos_weightUnitId_fkey" FOREIGN KEY ("weightUnitId") REFERENCES public.units(id)
+);
+
+
+-- public.customers definition
+
+-- Drop table
+
+-- DROP TABLE public.customers;
+
+CREATE TABLE public.customers (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	email varchar(255) NULL,
+	"phoneNumber" varchar(255) NULL,
+	birthday date NULL,
+	address varchar(255) NULL,
+	"wardId" int4 NULL,
+	"personGroupTypeId" int4 NULL,
+	"isActive" bool NULL DEFAULT true,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"customerGroupId" int4 NULL,
+	CONSTRAINT customers_pkey PRIMARY KEY (id),
+	CONSTRAINT "customers_customerGroupId_fkey" FOREIGN KEY ("customerGroupId") REFERENCES public.customer_groups(id),
+	CONSTRAINT "customers_personGroupTypeId_fkey" FOREIGN KEY ("personGroupTypeId") REFERENCES public.person_group_types(id),
+	CONSTRAINT "customers_wardId_fkey" FOREIGN KEY ("wardId") REFERENCES public.wards(id)
+);
+
+
+-- public.delivery_partners definition
+
+-- Drop table
+
+-- DROP TABLE public.delivery_partners;
+
+CREATE TABLE public.delivery_partners (
+	id serial4 NOT NULL,
+	"name" varchar(255) NULL,
+	email varchar(255) NULL,
+	mobile varchar(255) NULL,
+	code varchar(255) NULL,
+	company varchar(255) NULL,
+	address varchar(255) NULL,
+	description text NULL,
+	"shippingFee" int8 NULL,
+	"wardId" int4 NULL,
+	"personGroupTypeId" int4 NULL,
+	"deliveryPartnerGroupId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT delivery_partners_pkey PRIMARY KEY (id),
+	CONSTRAINT "delivery_partners_deliveryPartnerGroupId_fkey" FOREIGN KEY ("deliveryPartnerGroupId") REFERENCES public.delivery_partner_groups(id),
+	CONSTRAINT "delivery_partners_personGroupTypeId_fkey" FOREIGN KEY ("personGroupTypeId") REFERENCES public.person_group_types(id),
+	CONSTRAINT "delivery_partners_wardId_fkey" FOREIGN KEY ("wardId") REFERENCES public.wards(id)
+);
+
+
+-- public.orders definition
+
+-- Drop table
+
+-- DROP TABLE public.orders;
+
+CREATE TABLE public.orders (
+	id serial4 NOT NULL,
+	"customerId" int4 NULL,
+	"orderStatusId" int4 NULL,
+	"approvedStatusId" int4 NULL,
+	"shippingStatusId" int4 NULL,
+	"paymentStatusId" int4 NULL,
+	"exportedInventoryStatusId" int4 NULL,
+	"deliveryMethodId" int4 NULL,
+	code varchar(255) NULL,
+	"deliveryDate" timestamptz NULL,
+	"quantityTotal" int4 NULL,
+	"shippingFee" int8 NULL,
+	discount int8 NULL,
+	"totalPrice" int8 NULL,
+	"totalTaxPrice" int8 NULL,
+	"debtAmount" int8 NULL,
+	note varchar(255) NULL,
+	"deliveryPartnerId" int4 NULL,
+	"paymentMethodId" int4 NULL,
+	"staffId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT orders_pkey PRIMARY KEY (id),
+	CONSTRAINT "orders_approvedStatusId_fkey" FOREIGN KEY ("approvedStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "orders_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES public.customers(id),
+	CONSTRAINT "orders_deliveryMethodId_fkey" FOREIGN KEY ("deliveryMethodId") REFERENCES public.delivery_methods(id),
+	CONSTRAINT "orders_deliveryPartnerId_fkey" FOREIGN KEY ("deliveryPartnerId") REFERENCES public.delivery_partners(id),
+	CONSTRAINT "orders_exportedInventoryStatusId_fkey" FOREIGN KEY ("exportedInventoryStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "orders_orderStatusId_fkey" FOREIGN KEY ("orderStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "orders_paymentMethodId_fkey" FOREIGN KEY ("paymentMethodId") REFERENCES public.payment_methods(id),
+	CONSTRAINT "orders_paymentStatusId_fkey" FOREIGN KEY ("paymentStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "orders_shippingStatusId_fkey" FOREIGN KEY ("shippingStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "orders_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES public.users(id)
+);
+
+
+-- public.products definition
+
+-- Drop table
+
+-- DROP TABLE public.products;
+
+CREATE TABLE public.products (
+	id serial4 NOT NULL,
+	"categoryId" int4 NULL,
+	"brandId" int4 NULL,
+	sku varchar(255) NULL,
+	barcode varchar(255) NULL,
+	"name" varchar(255) NULL,
+	description text NULL,
+	"costPrice" int8 NULL,
+	"salePrice" int8 NULL,
+	"wholesalePrice" int8 NULL,
+	"inventoryQuantity" numeric(10, 2) NULL,
+	"standardUnit" varchar(255) NULL,
+	"isInventory" bool NULL DEFAULT false,
+	weight numeric(10, 2) NULL,
+	"weightUnitId" int4 NULL,
+	width numeric(10, 2) NULL,
+	length numeric(10, 2) NULL,
+	"sizeUnitId" int4 NULL,
+	"isActive" bool NULL DEFAULT true,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"isConsistOfSalePrice" bool NULL DEFAULT false,
+	"inputTaxId" int4 NULL,
+	"outputTaxId" int4 NULL,
+	CONSTRAINT products_pkey PRIMARY KEY (id),
+	CONSTRAINT "products_brandId_fkey" FOREIGN KEY ("brandId") REFERENCES public.brands(id),
+	CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES public.categories(id),
+	CONSTRAINT "products_inputTaxId_fkey" FOREIGN KEY ("inputTaxId") REFERENCES public.taxes(id),
+	CONSTRAINT "products_outputTaxId_fkey" FOREIGN KEY ("outputTaxId") REFERENCES public.taxes(id),
+	CONSTRAINT "products_sizeUnitId_fkey" FOREIGN KEY ("sizeUnitId") REFERENCES public.units(id),
+	CONSTRAINT "products_weightUnitId_fkey" FOREIGN KEY ("weightUnitId") REFERENCES public.units(id)
+);
+
+
+-- public.refresh_tokens definition
+
+-- Drop table
+
+-- DROP TABLE public.refresh_tokens;
+
+CREATE TABLE public.refresh_tokens (
+	id serial4 NOT NULL,
+	"userId" int4 NULL,
+	"token" varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT refresh_tokens_pkey PRIMARY KEY (id),
+	CONSTRAINT "refresh_tokens_userId_fkey" FOREIGN KEY ("userId") REFERENCES public.users(id)
+);
+
+
+-- public.returned_orders definition
+
+-- Drop table
+
+-- DROP TABLE public.returned_orders;
+
+CREATE TABLE public.returned_orders (
+	id serial4 NOT NULL,
+	"orderId" int4 NULL,
+	"returnedOrderStatusId" int4 NULL,
+	"customerId" int4 NULL,
+	code varchar(255) NULL,
+	note text NULL,
+	"returnedQuantityTotal" int4 NULL,
+	"refundPriceTotal" int8 NULL,
+	"receivedRefundAmount" int8 NULL,
+	"refundDate" timestamptz NULL,
+	"paymentMethodId" int4 NULL,
+	"refundStatusId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT returned_orders_pkey PRIMARY KEY (id),
+	CONSTRAINT "returned_orders_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES public.customers(id),
+	CONSTRAINT "returned_orders_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES public.orders(id),
+	CONSTRAINT "returned_orders_paymentMethodId_fkey" FOREIGN KEY ("paymentMethodId") REFERENCES public.payment_methods(id),
+	CONSTRAINT "returned_orders_refundStatusId_fkey" FOREIGN KEY ("refundStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "returned_orders_returnedOrderStatusId_fkey" FOREIGN KEY ("returnedOrderStatusId") REFERENCES public.statuses(id)
+);
+
+
+-- public.services definition
+
+-- Drop table
+
+-- DROP TABLE public.services;
+
+CREATE TABLE public.services (
+	id serial4 NOT NULL,
+	sku varchar(255) NULL,
+	"name" varchar(255) NULL,
+	description varchar(255) NULL,
+	"categoryId" int4 NULL,
+	"costPrice" int8 NULL,
+	"salePrice" int8 NULL,
+	"wholesalePrice" int8 NULL,
+	"standardUnit" varchar(255) NULL,
+	"isActive" bool NULL DEFAULT true,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"isConsistOfSalePrice" bool NULL DEFAULT false,
+	"inputTaxId" int4 NULL,
+	"outputTaxId" int4 NULL,
+	CONSTRAINT services_pkey PRIMARY KEY (id),
+	CONSTRAINT "services_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES public.categories(id),
+	CONSTRAINT "services_inputTaxId_fkey" FOREIGN KEY ("inputTaxId") REFERENCES public.taxes(id),
+	CONSTRAINT "services_outputTaxId_fkey" FOREIGN KEY ("outputTaxId") REFERENCES public.taxes(id)
+);
+
+
+-- public.specifications definition
+
+-- Drop table
+
+-- DROP TABLE public.specifications;
+
+CREATE TABLE public.specifications (
+	id serial4 NOT NULL,
+	"productId" int4 NULL,
+	"specificationTypeId" int4 NULL,
+	"sizeUnitId" int4 NULL,
+	value numeric NULL,
+	"groupId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"orderId" int4 NULL,
+	CONSTRAINT specifications_pkey PRIMARY KEY (id),
+	CONSTRAINT "specifications_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES public.orders(id),
+	CONSTRAINT "specifications_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id),
+	CONSTRAINT "specifications_sizeUnitId_fkey" FOREIGN KEY ("sizeUnitId") REFERENCES public.size_units(id),
+	CONSTRAINT "specifications_specificationTypeId_fkey" FOREIGN KEY ("specificationTypeId") REFERENCES public.specification_types(id)
+);
+
+
+-- public.stock_adjustments definition
+
+-- Drop table
+
+-- DROP TABLE public.stock_adjustments;
+
+CREATE TABLE public.stock_adjustments (
+	id serial4 NOT NULL,
+	"createdStaffId" int4 NULL,
+	"checkingStaffId" int4 NULL,
+	"adjustmentStaffId" int4 NULL,
+	code varchar(255) NULL,
+	note text NULL,
+	"adjustmentDate" timestamptz NULL,
+	"adjustmentStatusId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT stock_adjustments_pkey PRIMARY KEY (id),
+	CONSTRAINT "stock_adjustments_adjustmentStaffId_fkey" FOREIGN KEY ("adjustmentStaffId") REFERENCES public.users(id),
+	CONSTRAINT "stock_adjustments_adjustmentStatusId_fkey" FOREIGN KEY ("adjustmentStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "stock_adjustments_checkingStaffId_fkey" FOREIGN KEY ("checkingStaffId") REFERENCES public.users(id),
+	CONSTRAINT "stock_adjustments_createdStaffId_fkey" FOREIGN KEY ("createdStaffId") REFERENCES public.users(id)
+);
+
+
+-- public.suppliers definition
+
+-- Drop table
+
+-- DROP TABLE public.suppliers;
+
+CREATE TABLE public.suppliers (
+	id serial4 NOT NULL,
+	"supplierGroupId" int4 NULL,
+	code varchar(255) NULL,
+	"name" varchar(255) NULL,
+	email varchar(255) NULL,
+	mobile varchar(255) NULL,
+	company varchar(255) NULL,
+	"faxId" varchar(255) NULL,
+	"taxId" varchar(255) NULL,
+	website varchar(255) NULL,
+	address varchar(255) NULL,
+	"wardId" int4 NULL,
+	description text NULL,
+	"personGroupTypeId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT suppliers_pkey PRIMARY KEY (id),
+	CONSTRAINT "suppliers_personGroupTypeId_fkey" FOREIGN KEY ("personGroupTypeId") REFERENCES public.person_group_types(id),
+	CONSTRAINT "suppliers_supplierGroupId_fkey" FOREIGN KEY ("supplierGroupId") REFERENCES public.supplier_groups(id),
+	CONSTRAINT "suppliers_wardId_fkey" FOREIGN KEY ("wardId") REFERENCES public.wards(id)
+);
+
+
+-- public.vouchers definition
+
+-- Drop table
+
+-- DROP TABLE public.vouchers;
+
+CREATE TABLE public.vouchers (
+	id serial4 NOT NULL,
+	"voucherTypeId" int4 NULL,
+	code varchar(255) NULL,
+	value int8 NULL,
+	description text NULL,
+	"recordedDate" timestamptz NULL,
+	"voucherGroupId" int4 NULL,
+	"customerId" int4 NULL,
+	"supplierId" int4 NULL,
+	"staffId" int4 NULL,
+	"personGroupTypeId" int4 NULL,
+	"paymentMethodId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT vouchers_pkey PRIMARY KEY (id),
+	CONSTRAINT "vouchers_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES public.customers(id),
+	CONSTRAINT "vouchers_paymentMethodId_fkey" FOREIGN KEY ("paymentMethodId") REFERENCES public.payment_methods(id),
+	CONSTRAINT "vouchers_personGroupTypeId_fkey" FOREIGN KEY ("personGroupTypeId") REFERENCES public.person_group_types(id),
+	CONSTRAINT "vouchers_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES public.users(id),
+	CONSTRAINT "vouchers_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES public.suppliers(id),
+	CONSTRAINT "vouchers_voucherGroupId_fkey" FOREIGN KEY ("voucherGroupId") REFERENCES public.voucher_groups(id),
+	CONSTRAINT "vouchers_voucherTypeId_fkey" FOREIGN KEY ("voucherTypeId") REFERENCES public.voucher_types(id)
+);
+
+
+-- public.combo_items definition
+
+-- Drop table
+
+-- DROP TABLE public.combo_items;
+
+CREATE TABLE public.combo_items (
+	id serial4 NOT NULL,
+	"comboId" int4 NULL,
+	"serviceId" int4 NULL,
+	"productId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	quantity int4 NULL DEFAULT 0,
+	CONSTRAINT combo_items_pkey PRIMARY KEY (id),
+	CONSTRAINT "combo_items_comboId_fkey" FOREIGN KEY ("comboId") REFERENCES public.combos(id),
+	CONSTRAINT "combo_items_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id),
+	CONSTRAINT "combo_items_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES public.services(id)
+);
+
+
+-- public.images definition
+
+-- Drop table
+
+-- DROP TABLE public.images;
+
+CREATE TABLE public.images (
+	id serial4 NOT NULL,
+	"productId" int4 NULL,
+	"name" varchar(255) NULL,
+	"path" text NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"serviceId" int4 NULL,
+	"comboId" int4 NULL,
+	CONSTRAINT images_pkey PRIMARY KEY (id),
+	CONSTRAINT "images_comboId_fkey" FOREIGN KEY ("comboId") REFERENCES public.combos(id),
+	CONSTRAINT "images_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id),
+	CONSTRAINT "images_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES public.services(id)
+);
+
+
+-- public.order_payments definition
+
+-- Drop table
+
+-- DROP TABLE public.order_payments;
+
+CREATE TABLE public.order_payments (
+	id serial4 NOT NULL,
+	"orderId" int4 NULL,
+	amount int8 NULL,
+	"paidDate" timestamptz NULL,
+	"paymentMethodId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT order_payments_pkey PRIMARY KEY (id),
+	CONSTRAINT "order_payments_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES public.orders(id),
+	CONSTRAINT "order_payments_paymentMethodId_fkey" FOREIGN KEY ("paymentMethodId") REFERENCES public.payment_methods(id)
+);
+
+
+-- public.order_suppliers definition
+
+-- Drop table
+
+-- DROP TABLE public.order_suppliers;
+
+CREATE TABLE public.order_suppliers (
+	id serial4 NOT NULL,
+	"supplierId" int4 NULL,
+	"staffId" int4 NULL,
+	"importDate" timestamptz NULL,
+	"deliveredDate" timestamptz NULL,
+	code varchar(255) NULL,
+	note varchar(255) NULL,
+	"quantityTotal" int4 NULL,
+	"totalPrice" int8 NULL,
+	discount int8 NULL,
+	"totalTaxPrice" int8 NULL,
+	"importStatusId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT order_suppliers_pkey PRIMARY KEY (id),
+	CONSTRAINT "order_suppliers_importStatusId_fkey" FOREIGN KEY ("importStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "order_suppliers_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES public.users(id),
+	CONSTRAINT "order_suppliers_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES public.suppliers(id)
+);
+
+
+-- public.product_units definition
+
+-- Drop table
+
+-- DROP TABLE public.product_units;
+
+CREATE TABLE public.product_units (
+	id serial4 NOT NULL,
+	"productId" int4 NULL,
+	"name" varchar(255) NULL,
+	quantity numeric(10, 2) NULL,
+	"salePrice" int8 NULL,
+	"isDefaultPrice" bool NULL,
+	"isActive" bool NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT product_units_pkey PRIMARY KEY (id),
+	CONSTRAINT "product_units_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id)
+);
+
+
+-- public.purchase_orders definition
+
+-- Drop table
+
+-- DROP TABLE public.purchase_orders;
+
+CREATE TABLE public.purchase_orders (
+	id serial4 NOT NULL,
+	"supplierId" int4 NULL,
+	"staffId" int4 NULL,
+	code varchar(255) NULL,
+	"deliveredDate" timestamptz NULL,
+	note varchar(255) NULL,
+	"quantityTotal" int4 NULL,
+	"totalPrice" int8 NULL,
+	discount int8 NULL,
+	"totalTaxPrice" int8 NULL,
+	"debtAmount" int8 NULL,
+	"importDate" timestamptz NULL,
+	"paymentStatusId" int4 NULL,
+	"importStatusId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"voucherTypeId" int4 NULL,
+	"orderSupplierId" int4 NULL,
+	CONSTRAINT purchase_orders_pkey PRIMARY KEY (id),
+	CONSTRAINT "purchase_orders_importStatusId_fkey" FOREIGN KEY ("importStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "purchase_orders_orderSupplierId_fkey" FOREIGN KEY ("orderSupplierId") REFERENCES public.order_suppliers(id),
+	CONSTRAINT "purchase_orders_paymentStatusId_fkey" FOREIGN KEY ("paymentStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "purchase_orders_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES public.users(id),
+	CONSTRAINT "purchase_orders_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES public.suppliers(id),
+	CONSTRAINT "purchase_orders_voucherTypeId_fkey" FOREIGN KEY ("voucherTypeId") REFERENCES public.voucher_types(id)
+);
+
+
+-- public.returned_order_items definition
+
+-- Drop table
+
+-- DROP TABLE public.returned_order_items;
+
+CREATE TABLE public.returned_order_items (
+	id serial4 NOT NULL,
+	"returnedOrderId" int4 NULL,
+	"productId" int4 NULL,
+	"comboId" int4 NULL,
+	"serviceId" int4 NULL,
+	discount int4 NULL,
+	price int8 NULL,
+	quantity int8 NULL,
+	"totalPrice" int8 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT returned_order_items_pkey PRIMARY KEY (id),
+	CONSTRAINT "returned_order_items_comboId_fkey" FOREIGN KEY ("comboId") REFERENCES public.combos(id),
+	CONSTRAINT "returned_order_items_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id),
+	CONSTRAINT "returned_order_items_returnedOrderId_fkey" FOREIGN KEY ("returnedOrderId") REFERENCES public.returned_orders(id),
+	CONSTRAINT "returned_order_items_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES public.services(id)
+);
+
+
+-- public.returned_purchase_orders definition
+
+-- Drop table
+
+-- DROP TABLE public.returned_purchase_orders;
+
+CREATE TABLE public.returned_purchase_orders (
+	id serial4 NOT NULL,
+	"voucherTypeId" int4 NULL,
+	note text NULL,
+	"returnedQuantityTotal" int4 NULL,
+	discount int8 NULL,
+	"totalTaxPrice" int8 NULL,
+	"refundPriceTotal" int8 NULL,
+	"receivedRefundAmount" int8 NULL,
+	"refundDate" timestamptz NULL,
+	"purchaseOrderId" int4 NULL,
+	"paymentMethodId" int4 NULL,
+	"returnedStatusId" int4 NULL,
+	"refundStatusId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT returned_purchase_orders_pkey PRIMARY KEY (id),
+	CONSTRAINT "returned_purchase_orders_paymentMethodId_fkey" FOREIGN KEY ("paymentMethodId") REFERENCES public.payment_methods(id),
+	CONSTRAINT "returned_purchase_orders_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES public.purchase_orders(id),
+	CONSTRAINT "returned_purchase_orders_refundStatusId_fkey" FOREIGN KEY ("refundStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "returned_purchase_orders_returnedStatusId_fkey" FOREIGN KEY ("returnedStatusId") REFERENCES public.statuses(id),
+	CONSTRAINT "returned_purchase_orders_voucherTypeId_fkey" FOREIGN KEY ("voucherTypeId") REFERENCES public.voucher_types(id)
+);
+
+
+-- public.stock_adjustment_product_items definition
+
+-- Drop table
+
+-- DROP TABLE public.stock_adjustment_product_items;
+
+CREATE TABLE public.stock_adjustment_product_items (
+	id serial4 NOT NULL,
+	"stockAdjustmentId" int4 NULL,
+	"productId" int4 NULL,
+	"lossReasonId" int4 NULL,
+	"actualQuantity" int4 NULL,
+	"quantityDifference" int4 NULL,
+	note varchar(255) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT stock_adjustment_product_items_pkey PRIMARY KEY (id),
+	CONSTRAINT "stock_adjustment_product_items_lossReasonId_fkey" FOREIGN KEY ("lossReasonId") REFERENCES public.loss_reasons(id),
+	CONSTRAINT "stock_adjustment_product_items_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id),
+	CONSTRAINT "stock_adjustment_product_items_stockAdjustmentId_fkey" FOREIGN KEY ("stockAdjustmentId") REFERENCES public.stock_adjustments(id)
+);
+
+
+-- public.debts definition
+
+-- Drop table
+
+-- DROP TABLE public.debts;
+
+CREATE TABLE public.debts (
+	id serial4 NOT NULL,
+	"supplierId" int4 NULL,
+	"staffId" int4 NULL,
+	"purchaseOrderId" int4 NULL,
+	"voucherId" int4 NULL,
+	"recordedDate" timestamptz NULL,
+	"debtAmount" int8 NULL,
+	"debtTypeId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	"returnedPurchaseOrderId" int4 NULL,
+	"customerId" int4 NULL,
+	"orderId" int4 NULL,
+	CONSTRAINT debts_pkey PRIMARY KEY (id),
+	CONSTRAINT "debts_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES public.customers(id),
+	CONSTRAINT "debts_debtTypeId_fkey" FOREIGN KEY ("debtTypeId") REFERENCES public.debt_types(id),
+	CONSTRAINT "debts_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES public.orders(id),
+	CONSTRAINT "debts_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES public.purchase_orders(id),
+	CONSTRAINT "debts_returnedPurchaseOrderId_fkey" FOREIGN KEY ("returnedPurchaseOrderId") REFERENCES public.returned_purchase_orders(id),
+	CONSTRAINT "debts_staffId_fkey" FOREIGN KEY ("staffId") REFERENCES public.users(id),
+	CONSTRAINT "debts_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES public.suppliers(id),
+	CONSTRAINT "debts_voucherId_fkey" FOREIGN KEY ("voucherId") REFERENCES public.vouchers(id)
+);
+
+
+-- public.order_items definition
+
+-- Drop table
+
+-- DROP TABLE public.order_items;
+
+CREATE TABLE public.order_items (
+	id serial4 NOT NULL,
+	"orderId" int4 NULL,
+	"productId" int4 NULL,
+	"comboId" int4 NULL,
+	"serviceId" int4 NULL,
+	quantity numeric(10, 2) NULL,
+	discount int8 NULL,
+	price int8 NULL,
+	"totalPrice" numeric(10, 2) NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	description varchar(255) NULL,
+	"productUnitId" int4 NULL,
+	CONSTRAINT order_items_pkey PRIMARY KEY (id),
+	CONSTRAINT "order_items_comboId_fkey" FOREIGN KEY ("comboId") REFERENCES public.combos(id),
+	CONSTRAINT "order_items_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES public.orders(id),
+	CONSTRAINT "order_items_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id),
+	CONSTRAINT "order_items_productUnitId_fkey" FOREIGN KEY ("productUnitId") REFERENCES public.product_units(id),
+	CONSTRAINT "order_items_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES public.services(id)
+);
+
+
+-- public.order_supplier_product_items definition
+
+-- Drop table
+
+-- DROP TABLE public.order_supplier_product_items;
+
+CREATE TABLE public.order_supplier_product_items (
+	id serial4 NOT NULL,
+	"orderSupplierId" int4 NULL,
+	"productId" int4 NULL,
+	quantity int4 NULL,
+	price int8 NULL,
+	discount int8 NULL,
+	"totalPrice" int8 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT order_supplier_product_items_pkey PRIMARY KEY (id),
+	CONSTRAINT "order_supplier_product_items_orderSupplierId_fkey" FOREIGN KEY ("orderSupplierId") REFERENCES public.order_suppliers(id),
+	CONSTRAINT "order_supplier_product_items_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id)
+);
+
+
+-- public.purchase_order_payments definition
+
+-- Drop table
+
+-- DROP TABLE public.purchase_order_payments;
+
+CREATE TABLE public.purchase_order_payments (
+	id serial4 NOT NULL,
+	"purchaseOrderId" int4 NULL,
+	amount int8 NULL,
+	"paidDate" timestamptz NULL,
+	"paymentMethodId" int4 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT purchase_order_payments_pkey PRIMARY KEY (id),
+	CONSTRAINT "purchase_order_payments_paymentMethodId_fkey" FOREIGN KEY ("paymentMethodId") REFERENCES public.payment_methods(id),
+	CONSTRAINT "purchase_order_payments_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES public.purchase_orders(id)
+);
+
+
+-- public.purchase_order_product_items definition
+
+-- Drop table
+
+-- DROP TABLE public.purchase_order_product_items;
+
+CREATE TABLE public.purchase_order_product_items (
+	id serial4 NOT NULL,
+	"purchaseOrderId" int4 NULL,
+	"productId" int4 NULL,
+	quantity int4 NULL,
+	price int8 NULL,
+	discount int8 NULL,
+	"totalPrice" int8 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT purchase_order_product_items_pkey PRIMARY KEY (id),
+	CONSTRAINT "purchase_order_product_items_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id),
+	CONSTRAINT "purchase_order_product_items_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES public.purchase_orders(id)
+);
+
+
+-- public.returned_purchase_order_product_items definition
+
+-- Drop table
+
+-- DROP TABLE public.returned_purchase_order_product_items;
+
+CREATE TABLE public.returned_purchase_order_product_items (
+	id serial4 NOT NULL,
+	"returnedPurchaseOrderId" int4 NULL,
+	"productId" int4 NULL,
+	"returnedQuantity" int4 NULL,
+	price int8 NULL,
+	discount int8 NULL,
+	"totalPrice" int8 NULL,
+	"createdAt" timestamptz NULL,
+	"updatedAt" timestamptz NULL,
+	"deletedAt" timestamptz NULL,
+	CONSTRAINT returned_purchase_order_product_items_pkey PRIMARY KEY (id),
+	CONSTRAINT "returned_purchase_order_product_it_returnedPurchaseOrderId_fkey" FOREIGN KEY ("returnedPurchaseOrderId") REFERENCES public.returned_purchase_orders(id),
+	CONSTRAINT "returned_purchase_order_product_items_productId_fkey" FOREIGN KEY ("productId") REFERENCES public.products(id)
+);
+
 INSERT INTO public."SequelizeMeta" ("name") VALUES
 	 ('20230603141307-create-users-table.ts'),
 	 ('20230604165637-create-refresh-tokens.ts'),
