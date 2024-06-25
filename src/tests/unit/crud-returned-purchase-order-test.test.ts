@@ -58,7 +58,6 @@ describe('GET /api/returned-purchase-orders/:id', () => {
     const response = await request(process.env.BASE_PATH)
       .get(`/api/returned-purchase-orders/${returnedPurchaseOrderId}`)
       .set('Authorization', `Bearer ${process.env.UNIT_TEST_BEARER_TOKEN}`);
-    console.log(response.body);
     expect(response.statusCode).toBe(200);
     expect(response.body.id).toBe(returnedPurchaseOrderId);
   });

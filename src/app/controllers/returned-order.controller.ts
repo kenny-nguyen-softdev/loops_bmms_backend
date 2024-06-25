@@ -69,8 +69,6 @@ class ReturnedOrderController implements BaseController {
           // serviceItems?: { id: number; quantity: number; price: number; discount: number; totalPrice: number }[];
           // comboItems?: { id: number; quantity: number; price: number; discount: number; totalPrice: number }[];
         };
-        console.log('longdangoday');
-        console.log(returnedOrderInput);
         let order: Order | null = null;
         if (returnedOrderInput.orderId) {
           const orderRepository = new OrderRepository();

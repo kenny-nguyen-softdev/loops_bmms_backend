@@ -15,7 +15,7 @@ class ServiceRepository extends BaseRepository<Service> implements ServiceInterf
     return await this.model.findAll({
       where: {
         name: {
-          [Op.like]: `%${filters?.keyword ?? ''}%`,
+          [Op.iLike]: `%${filters?.keyword ?? ''}%`,
         },
       },
       order: [['createdAt', 'DESC']],

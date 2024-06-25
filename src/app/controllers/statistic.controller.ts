@@ -1,4 +1,4 @@
-import { col, FindOptions, fn, literal, Op } from 'sequelize';
+import { FindOptions, Op } from 'sequelize';
 import { DEBT_TYPES, PAYMENT_METHODS, STATUSES, VOUCHER_TYPES } from '../../constant';
 import { ISuccessResponse, IErrorResponse, SuccessResponse, ErrorResponse } from '../core/response/BaseResponse';
 import { IRequest, IResponse } from '../core/vendors';
@@ -12,13 +12,16 @@ import { generateDateRange, generateMonthRange } from '../../utils/date-handler.
 import PaymentMethodRepository from '../repositories/PaymentMethod/payment-method.repository';
 import {
   Customer,
-  Debt,
   District,
-  Order,
+  OrderItem,
   PaymentMethod,
+  Product,
   Province,
   PurchaseOrder,
+  ReturnedOrder,
+  Status,
   Supplier,
+  Tax,
   User,
   Voucher,
   VoucherType,
@@ -27,8 +30,10 @@ import {
 import PurchaseOrderPaymentRepository from '../repositories/PurchaseOrderPayment/purchase-order-payment.repository';
 import OrderPaymentRepository from '../repositories/OrderPayment/order-payment.repository';
 import DebtRepository from '../repositories/Debt/debt.repository';
-import { LargeNumberLike } from 'crypto';
 import DebtTypeRepository from '../repositories/DebtType/debt-type.repository';
+import ReturnedOrderItemRepository from '../repositories/ReturnedOrderItem/returned-order-item.repository';
+import OrderItemRepository from '../repositories/OrderItem/order-item.repository';
+import VoucherRepository from '../repositories/Voucher/voucher.repository';
 
 class StatisticController {
   async revenueReport(req: IRequest, res: IResponse): Promise<ISuccessResponse | IErrorResponse> {
@@ -135,25 +140,16 @@ class StatisticController {
 
   async orderReport(req: IRequest, res: IResponse): Promise<ISuccessResponse | IErrorResponse> {
     try {
-      const { paymentMethodId } = req.body;
+      const { orderStatusId } = req.body;
       const startDate = new Date(req.body.startDate).toLocaleDateString();
       const endDate = new Date(req.body.endDate).toLocaleDateString();
-
-      if (!paymentMethodId) {
-        return new ErrorResponse(res, 'Payment method not found', null, 404);
-      }
-
       const orderRepo = new OrderRepository();
-      const orderCompleted = await new StatusRepository().findOne({ where: { key: STATUSES.orderCompleted } });
-      // full paid
-      const orderFullPaid = await new StatusRepository().findOne({ where: { key: STATUSES.orderFullPaid } });
-
+      let whereConditions = {};
+      if (orderStatusId){
+        whereConditions = {...whereConditions, orderStatusId: orderStatusId};
+      }
       const orders = await orderRepo.find({
-        where: {
-          orderStatusId: orderCompleted ? orderCompleted.id : null,
-          paymentStatusId: orderFullPaid ? orderFullPaid.id : null,
-          paymentMethodId: paymentMethodId,
-        },
+        where: whereConditions
       });
 
       const orderByDate: { [date: string]: number } = generateDateRange(startDate, endDate);
@@ -316,23 +312,113 @@ class StatisticController {
 
   async profitAndLossReport(req: IRequest, res: IResponse): Promise<ISuccessResponse | IErrorResponse> {
     try {
-      const {startDate, endDate} = req.body;
+      const { startDate, endDate } = req.body;
+      let salesAmount = 0;
+      let salesReturnAmount = 0;
+      let vat = 0;
+      let deliveryFee = 0;
+      let discount = 0;
+      let costAmount = 0;
+      const supplierDeliveryFee = 0;
+      let orderIncome = 0;
+      let orderCosts = 0;
+
+      const options = {
+        where: {
+          [Op.and]: {
+            createdAt: {
+              [Op.gte]: new Date(startDate),
+              [Op.lte]: new Date(endDate + ' 23:59:59'),
+            },
+          },
+        },
+        include: [
+          {
+            model: Product,
+            as: 'product',
+            include: [
+              {
+                model: Tax,
+                as: 'inputTax',
+              },
+            ],
+          },
+        ],
+      };
+
+      const [orders, orderItems, returnOrderItems, vouchers, voucherTypes] = await Promise.all([
+        new OrderRepository().find({
+          where: {
+            [Op.and]: {
+              createdAt: {
+                [Op.gte]: new Date(startDate),
+                [Op.lte]: new Date(endDate + ' 23:59:59'),
+              },
+            },
+          },
+        }),
+        new OrderItemRepository().find(options),
+        new ReturnedOrderItemRepository().find(options),
+        new VoucherRepository().find({
+          where: {
+            [Op.and]: {
+              recordedDate: {
+                [Op.gte]: new Date(startDate),
+                [Op.lte]: new Date(endDate + ' 23:59:59'),
+              },
+              voucherGroupId: {
+                [Op.ne]: null,
+              },
+            },
+          },
+        }),
+        new VoucherTypeRepository().find(),
+      ]);
+
+      orderItems.forEach((orderItem) => {
+        salesAmount += Number(orderItem.price) * Number(orderItem.quantity);
+        costAmount += Number((orderItem as any).product?.costPrice || 0) * Number(orderItem.quantity);
+      });
+
+      returnOrderItems.forEach((returnOrderItem) => {
+        salesReturnAmount += Number(returnOrderItem.price) * Number(returnOrderItem.quantity);
+      });
+
+      orders.forEach((order) => {
+        vat += Number(order.totalTaxPrice);
+        deliveryFee += Number(order.shippingFee);
+        discount += Number(order.discount);
+      });
+
+      const voucherPaymentType = voucherTypes.find((voucherType) => voucherType.key === VOUCHER_TYPES.paymentVoucher);
+      const voucherReceiptType = voucherTypes.find((voucherType) => voucherType.key === VOUCHER_TYPES.receiptVoucher);
+
+      vouchers.forEach((voucher) => {
+        if (voucher.voucherTypeId === voucherPaymentType?.id) {
+          orderCosts += Number(voucher.value);
+        }
+
+        if (voucher.voucherTypeId === voucherReceiptType?.id) {
+          orderIncome += Number(voucher.value);
+        }
+      });
+
       const result = {
         saleRevenue: {
           actualSalesAmount: {
-            salesAmount: 0,
-            salesReturnAmount: 0,
+            salesAmount: salesAmount,
+            salesReturnAmount: salesReturnAmount,
           },
-          vat: 0,
-          deliveryFee: 0,
-          discount: 0,
+          vat: vat,
+          deliveryFee: deliveryFee,
+          discount: discount,
         },
         salesExpenses: {
-          costAmount: 0,
-          deliveryFee: 0,
+          costAmount: costAmount,
+          deliveryFee: supplierDeliveryFee,
         },
-        orderIncome: 0,
-        orderCosts: 0,
+        orderIncome: orderIncome,
+        orderCosts: orderCosts,
       };
 
       return new SuccessResponse(res, result);
@@ -622,9 +708,8 @@ class StatisticController {
       //calculate after debt
       for (const customerId in latestDebts) {
         const debt = latestDebts[customerId];
-        if (debt?.beforeDebt && debt?.increaseDebt && debt?.decreaseDebt) {
-          debt.afterDebt = Number(debt.beforeDebt) + Number(debt.increaseDebt) - Number(debt.decreaseDebt);
-        }
+        debt.afterDebt =
+          Number(debt?.beforeDebt || 0) + Number(debt?.increaseDebt || 0) - Number(debt?.decreaseDebt || 0);
       }
       return new SuccessResponse(res, latestDebts);
     } catch (error) {
@@ -784,9 +869,8 @@ class StatisticController {
       //calculate after debt
       for (const supplierId in latestDebts) {
         const debt = latestDebts[supplierId];
-        if (debt?.beforeDebt && debt?.increaseDebt && debt?.decreaseDebt) {
-          debt.afterDebt = Number(debt.beforeDebt) + Number(debt.increaseDebt) - Number(debt.decreaseDebt);
-        }
+        debt.afterDebt =
+          Number(debt?.beforeDebt || 0) + Number(debt?.increaseDebt || 0) - Number(debt?.decreaseDebt || 0);
       }
       return new SuccessResponse(res, latestDebts);
     } catch (error) {
@@ -801,7 +885,6 @@ class StatisticController {
         startDate,
         endDate,
       );
-      console.log(customerByMonth);
       const orderRepo = new OrderRepository();
       const orderOptions: FindOptions = {
         where: {
@@ -828,9 +911,9 @@ class StatisticController {
           (date.getMonth() + 1).toString().padStart(2, '0').toString().padStart(2, '0') + '/' + date.getFullYear();
 
         const findCustomerByMonth = customerIdsByMonth.findIndex((item) => item.date === formatDate);
-        if(findCustomerByMonth !== -1){
+        if (findCustomerByMonth !== -1) {
           const findId = customerIdsByMonth[findCustomerByMonth].customerIds.findIndex((id) => id === order.customerId);
-          if (findId === -1){
+          if (findId === -1) {
             customerIdsByMonth[findCustomerByMonth].customerIds.push(Number(order.customerId));
             if (customerByMonth[formatDate]?.total >= 0) {
               customerByMonth[formatDate].total += 1;
@@ -891,6 +974,86 @@ class StatisticController {
   async customerBuyProductsByProductReport(req: IRequest, res: IResponse): Promise<ISuccessResponse | IErrorResponse> {
     try {
       return new SuccessResponse(res, 'customerBuyProductsByProductReport');
+    } catch (error) {
+      return new ErrorResponse(res, (error as Error).message, error);
+    }
+  }
+
+  async kpiDashboard(req: IRequest, res: IResponse): Promise<ISuccessResponse | IErrorResponse> {
+    try {
+      const { startDate, endDate } = req.body;
+      const options = {
+        where: {
+          createdAt: {
+            [Op.and]: {
+              [Op.gte]: startDate + ' 00:00:00',
+              [Op.lte]: endDate + ' 23:59:59',
+            },
+          },
+        },
+      };
+      const [orders, allReturnOrderItems] = await Promise.all([
+        new OrderRepository().find({
+          ...options,
+          include: [
+            {
+              model: Status,
+              as: 'orderStatus',
+            },
+            {
+              model: OrderItem,
+              as: 'orderItems',
+            }
+          ],
+          order: [['customerId', 'ASC']],
+        }),
+        new ReturnedOrderItemRepository().find({...options, include: [{
+          model: ReturnedOrder,
+          as: 'returnedOrder',
+        }]}),
+      ]);
+      const kpis: {
+        revenue: number;
+        orderCount: number;
+        productCount: number;
+        customerCount: number;
+        returnProductCount: number;
+      } = { revenue: 0, orderCount: 0, productCount: 0, customerCount: 0, returnProductCount: 0 };
+      
+      if(orders.length > 0) kpis.customerCount += 1;
+
+      const orderIds: number[] = [];
+      orders.forEach((order, index) => {
+        if ((order as any).orderStatus?.key !== STATUSES.orderCanceled) {
+          orderIds.push(Number(order.id));
+          // Calculate customer by order
+          if (index != orders.length - 1) {
+            if (orders[index + 1].customerId !== order.customerId) {
+              kpis.customerCount += 1;
+            }
+          }   
+          // Calculate revenue
+          kpis.revenue += Number(order.totalPrice);
+          // Calculate order count
+          kpis.orderCount += 1;
+          // Calculate product by order
+          const orderItems = (order as any).orderItems;
+          if (orderItems) {
+            orderItems.forEach((orderItem: OrderItem) => {
+              if (orderItem.productId)
+                kpis.productCount += Number(orderItem.quantity);
+            });
+          }
+        }
+      });
+
+      allReturnOrderItems.forEach((returnOrderItem) => {
+        if (orderIds.includes(Number((returnOrderItem as any).returnedOrder.orderId))) {
+          kpis.returnProductCount += Number(returnOrderItem.quantity)*Number(returnOrderItem.price);
+        }
+      });
+      
+      return new SuccessResponse(res, kpis);
     } catch (error) {
       return new ErrorResponse(res, (error as Error).message, error);
     }

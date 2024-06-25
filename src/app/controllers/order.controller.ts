@@ -113,7 +113,6 @@ class OrderController implements BaseController {
           customerPays: number;
           customerPaysDate: Date;
         };
-        console.log(orderInput);
         // Create order
         orderInput.code = generateONCode();
         const order = await this.orderRepository.create(orderInput);
@@ -176,25 +175,30 @@ class OrderController implements BaseController {
           const newOrderItems = await orderItemRepository.bulkCreate(orderItems);
           createdOrderItems = [...createdOrderItems, ...newOrderItems];
         }
-        const debtTypeRepository = new DebtTypeRepository();
-        const customerDebtType = await debtTypeRepository.findOne({
-          where: {
-            key: DEBT_TYPES.customerDebt,
-          },
-        });
-        if (order) {
-          // Create debt amount for customer
-          const debtRepository = new DebtRepository();
-          const currentDateTime: Date = new Date();
-          await debtRepository.create({
-            customerId: order.customerId,
-            staffId: order.staffId,
-            orderId: order.id,
-            voucherId: null,
-            recordedDate: order.createdAt ?? currentDateTime,
-            debtAmount: order.debtAmount,
-            debtTypeId: customerDebtType?.id,
+        const notApproveStatus = await new StatusRepository().findOne({where: {
+          key: STATUSES.notApprovedOrder
+        }});
+        if (orderInput.approvedStatusId !== notApproveStatus?.id) {
+          const debtTypeRepository = new DebtTypeRepository();
+          const customerDebtType = await debtTypeRepository.findOne({
+            where: {
+              key: DEBT_TYPES.customerDebt,
+            },
           });
+          if (order) {
+            // Create debt amount for customer
+            const debtRepository = new DebtRepository();
+            const currentDateTime: Date = new Date();
+            await debtRepository.create({
+              customerId: order.customerId,
+              staffId: order.staffId,
+              orderId: order.id,
+              voucherId: null,
+              recordedDate: order.createdAt ?? currentDateTime,
+              debtAmount: order.debtAmount,
+              debtTypeId: customerDebtType?.id,
+            });
+          }
         }
         if(orderInput?.specificationItems && orderInput?.specificationItems.length > 0) {
           const specificationItems = orderInput.specificationItems.map(
@@ -368,6 +372,28 @@ class OrderController implements BaseController {
               orderStatusId: orderProcessingStatus.id,
               approvedStatusId: approvedStatus.id,
             });
+
+            const debtTypeRepository = new DebtTypeRepository();
+            const customerDebtType = await debtTypeRepository.findOne({
+              where: {
+                key: DEBT_TYPES.customerDebt,
+              },
+            });
+            if (order) {
+              // Create debt amount for customer
+              const debtRepository = new DebtRepository();
+              const currentDateTime: Date = new Date();
+              await debtRepository.create({
+                customerId: order.customerId,
+                staffId: order.staffId,
+                orderId: order.id,
+                voucherId: null,
+                recordedDate: order.createdAt ?? currentDateTime,
+                debtAmount: order.debtAmount,
+                debtTypeId: customerDebtType?.id,
+              });
+            }
+            
           } else {
             throw new InternalServerError('The order status need to be "ordered" status in order to approve order');
           }
@@ -409,10 +435,10 @@ class OrderController implements BaseController {
                 if (orderItem.productId !== null) {
                   const product = products.find((product) => product.id === orderItem.productId);
                   if (product) {
-                    if (product.inventoryQuantity <= 0) {
+                    if (Number(product.inventoryQuantity) <= 0) {
                       throw new InternalServerError('Out of stock in inventory');
                     }
-                    if (product.inventoryQuantity < orderItem.quantity) {
+                    if (Number(product.inventoryQuantity) < Number(orderItem.quantity)) {
                       throw new InternalServerError(
                         `The inventoryQuantity in stock of the product with id ${orderItem.productId} must be greater than or equal to the quantity to be released`,
                       );

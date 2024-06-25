@@ -56,6 +56,9 @@ class StatisticRoute {
     this.router
       .route('/customer-buy-products-by-product-reports')
       .post(this.authMiddleware.handler(), this.statisticController.customerBuyProductsByProductReport.bind(this.statisticController));
+    this.router
+      .route('/dashboard-kpi')
+      .post(this.authMiddleware.handler(), this.statisticController.kpiDashboard.bind(this.statisticController));
   }
 }
 export default new StatisticRoute().router;

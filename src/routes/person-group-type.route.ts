@@ -63,7 +63,7 @@ class PersonGroupTypeRoute {
 
     this.router.get(
       '/',
-      this.authMiddleware.handler(),
+      // this.authMiddleware.handler(),
       this.personGroupTypeController.index.bind(this.personGroupTypeController),
     );
   }

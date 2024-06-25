@@ -18,7 +18,9 @@ class ProvinceRoute {
     this.intializeRoutes();
   }
   intializeRoutes() {
-        /**
+
+    this.router.get('/public', this.provinceController.index.bind(this.provinceController));  
+    /**
      * @openapi
      * /api/provinces:
      *   get:

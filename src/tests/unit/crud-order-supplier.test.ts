@@ -50,7 +50,6 @@ describe('GET /api/order-suppliers/:id', () => {
     const response = await request(process.env.BASE_PATH)
       .get(`/api/order-suppliers/${orderSupplierId}`)
       .set('Authorization', `Bearer ${process.env.UNIT_TEST_BEARER_TOKEN}`);
-    console.log(response.body);
     expect(response.statusCode).toBe(200);
     expect(response.body.id).toBe(orderSupplierId);
   });

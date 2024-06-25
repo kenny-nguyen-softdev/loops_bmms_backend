@@ -18,7 +18,9 @@ class DistrictRoute {
     this.intializeRoutes();
   }
   intializeRoutes() {
-        /**
+    this.router.get('/public', this.districtController.index.bind(this.districtController));
+    
+    /**
      * @openapi
      * /api/districts:
      *   get:
@@ -82,7 +84,7 @@ class DistrictRoute {
      *         description: Internal server error
      */
     this.router.get('/', this.authMiddleware.handler(), this.districtController.index.bind(this.districtController));
-        /**
+    /**
      * @openapi
      * /api/districts/{id}:
      *   get:

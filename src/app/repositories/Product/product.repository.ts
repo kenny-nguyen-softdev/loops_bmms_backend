@@ -16,7 +16,7 @@ class ProductRepository extends BaseRepository<Product> implements ProductInterf
     return await this.model.findAll({
       where: {
         name: {
-          [Op.like]: `%${filters?.keyword ?? ''}%`,
+          [Op.iLike]: `%${filters?.keyword ?? ''}%`,
         },
       },
       order: [['createdAt', 'DESC']],

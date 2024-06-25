@@ -95,10 +95,14 @@ class AuthRoute {
      *               privateImage:
      *                 type: string
      *                 description: Private image URL
+     *               personGroupTypeId: 
+     *                 type: number
+     *                 description: Person group type id
      *             required:
      *               - email
      *               - password
      *               - password_confirmation
+     *               - personGroupTypeId
      *     responses:
      *       200:
      *         description: Successful sign-up
@@ -199,7 +203,9 @@ class AuthRoute {
      *       404:
      *         description: User not found
      */
-    this.router.route('/user-profile').post(this.authMiddleware.handler(), this.authController.userProfile);
+    this.router.route('/user-profile').post(
+      // this.authMiddleware.handler(), 
+      this.authController.userProfile);
     /**
      * @openapi
      * /api/auth/sign-out:

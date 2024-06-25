@@ -10,6 +10,7 @@ const sequelizeConnection = new Sequelize(database, user, password, {
   dialect: 'postgres',
   dialectModule: postgres,
   timezone: 'Asia/Ho_Chi_Minh',
+  logging: false,
 });
 const cls = createNamespace('bmms-loops-namespace');
 Sequelize.useCLS(cls);

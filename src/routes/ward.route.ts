@@ -18,6 +18,7 @@ class WardRoute {
     this.intializeRoutes();
   }
   intializeRoutes() {
+    this.router.get('/public', this.wardController.index.bind(this.wardController));
     /**
      * @openapi
      * /api/wards:

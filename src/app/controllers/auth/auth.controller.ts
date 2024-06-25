@@ -1,18 +1,25 @@
 import { PassportStatic } from 'passport';
 import jwt from 'jsonwebtoken';
 import { INext, IRequest, IResponse } from '../../core/vendors';
-import { RefreshTokenInput, RefreshTokenOutput, UserInput } from '../../../models';
+import { Customer, RefreshTokenInput, RefreshTokenOutput, UserInput } from '../../../models';
 import { ErrorResponse, SuccessResponse } from '../../core/response/BaseResponse';
 import { comparePassword, hashPassword } from '../../../utils';
 import UserRepository from '../../repositories/User/user.repository';
 import { pick } from '../../core/utils';
 import RefreshTokenRepository from '../../repositories/RefreshToken/refresh-token.repository';
+import PersonGroupTypeRepository from '../../repositories/PersonGroupType/person-group-type.repository';
+import CustomerRepository from '../../repositories/Customer/customer.repository';
+import { PERSON_GROUP_TYPES } from '../../../constant';
 
 class AuthController {
   private passport: PassportStatic;
+  personGroupTypeRepository: PersonGroupTypeRepository;
+  customerRepository: CustomerRepository;
 
   constructor(passport: PassportStatic) {
     this.passport = passport;
+    this.personGroupTypeRepository = new PersonGroupTypeRepository();
+    this.customerRepository = new CustomerRepository();
   }
 
   public signIn = (req: IRequest, res: IResponse, next: INext) => {
@@ -61,9 +68,15 @@ class AuthController {
   public signUp = async (req: IRequest, res: IResponse) => {
     try {
       const newUserInput = pick(
-        ['name', 'email', 'password', 'username', 'privateImage', 'personGroupTypeId'],
+        ['name', 'email', 'password', 'username', 'privateImage', 'personGroupTypeId', 'customerInfo'],
         req.body as unknown as UserInput,
       ) as UserInput;
+
+      // const customerType = await this.personGroupTypeRepository.findOne({where: { key: PERSON_GROUP_TYPES.customer }});
+      if (newUserInput?.customerInfo) {
+        const customer = await this.customerRepository.create(newUserInput.customerInfo);
+        newUserInput.customerId = customer.id;
+      }
 
       // Check if the email is already registered
       const userRepository = new UserRepository();
@@ -172,6 +185,9 @@ class AuthController {
         where: {
           id: userId,
         },
+        include: {
+          model: Customer,
+        }
       });
       if (!user) return new ErrorResponse(res, 'User Not Found', { message: 'User Not Found' }, 404);
       const userProfile = {
@@ -180,6 +196,7 @@ class AuthController {
         name: user.name,
         username: user.username,
         privateImage: user.privateImage,
+        customer: (user as any).Customer,
       };
       return new SuccessResponse(res, userProfile);
     } catch (error) {

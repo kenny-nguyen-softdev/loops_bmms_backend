@@ -6,8 +6,9 @@ const signUpSchema = Joi.object({
     'any.only': '{{#label}} does not match the password',
   }),
   name: Joi.string(),
-  username: Joi.string(),
-  privateImage: Joi.string(),
+  username: Joi.string().allow(''),
+  privateImage: Joi.string().allow(''),
   personGroupTypeId: Joi.number().required(),
+  customerInfo: Joi.object(),
 });
 export default signUpSchema;

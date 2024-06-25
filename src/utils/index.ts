@@ -1,7 +1,7 @@
 import { hashPassword, comparePassword } from './password-handler.util';
 import { getCurrentDate } from './date-handler.util';
-import { getOnlyImageName } from './string-handler.util';
-import { generateUploadUrls } from './presigned-url-handler.util';
+import { getOnlyImageName, formatCurrency } from './string-handler.util';
+import { generateUploadUrls, uploadPdf } from './presigned-url-handler.util';
 import {
   generateSVNCode,
   generateCBVNCode,
@@ -27,5 +27,7 @@ export {
   generateCBVNCode,
   generateIANCode,
   generateDSPNCode,
-  generateONCode
+  generateONCode,
+  uploadPdf,
+  formatCurrency,
 };

@@ -10,6 +10,7 @@ import {
 import sequelizeConnection from '../app/core/db/connection';
 import { RefreshToken } from './RefreshToken';
 import { PersonGroupType } from './PersonGroupType';
+import { Customer } from './Customer';
 
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
@@ -20,9 +21,12 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
   declare privateImage: string;
   declare isActive: boolean;
   declare personGroupTypeId: ForeignKey<PersonGroupType['id']>;
+  declare customerId: ForeignKey<Customer['id']>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare deletedAt: CreationOptional<Date>;
+
+  declare customerInfo?: Customer;
 }
 
 export type UserInput = CreationAttributes<User>;
@@ -66,6 +70,14 @@ User.init(
       type: DataTypes.INTEGER,
       references: {
         model: 'person_group_types',
+        key: 'id',
+      },
+    },
+    customerId: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'customers',
         key: 'id',
       },
     },

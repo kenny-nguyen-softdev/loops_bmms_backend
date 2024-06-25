@@ -321,6 +321,7 @@ export {
 
 // User
 User.hasMany(RefreshToken, { foreignKey: 'userId' });
+User.belongsTo(Customer, { foreignKey: 'customerId' });
 User.belongsTo(PersonGroupType, { foreignKey: 'personGroupTypeId' });
 
 // RefreshToken

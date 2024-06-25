@@ -22,6 +22,7 @@ class ProductRoute {
     this.intializeRoutes();
   }
   intializeRoutes() {
+    this.router.get('/public', this.productController.index.bind(this.productController));
     /**
      * @openapi
      * /api/products:

@@ -91,8 +91,6 @@ describe('GET purchase-orders', () => {
 });
 describe('GET /api/purchase-orders/:id', () => {
   it('should return an existing of purchaseOrders', async () => {
-    console.log('purchaseOrderIdTest');
-    console.log(purchaseOrderIdTest);
     const response = await request(process.env.BASE_PATH)
       .get(`/api/purchase-orders/${purchaseOrderIdTest}`)
       .set('Authorization', `Bearer ${process.env.UNIT_TEST_BEARER_TOKEN}`);

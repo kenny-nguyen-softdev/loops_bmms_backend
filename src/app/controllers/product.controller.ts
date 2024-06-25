@@ -185,8 +185,6 @@ class ProductController implements BaseController {
       }
       const updatedProduct = await this.productRepository.update(productId, productInput);
       if (productInput.productUnits) {
-        console.log('longdeptraivai');
-        console.log(productInput.productUnits);
         const productUnitsInput: ProductUnit[] = productInput.productUnits.map((productUnit: ProductUnitsInput) => ({
           id: productUnit.id,
           productId: product.id,

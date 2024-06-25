@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { PurchaseOrderAttributes, PurchaseOrderInput, PurchaseOrderProductItem } from '../../models';
+import { Product, PurchaseOrderAttributes, PurchaseOrderInput, PurchaseOrderProductItem } from '../../models';
 import { BaseController } from '../core/controllers/BaseController';
 import sequelizeConnection from '../core/db/connection';
 import {
@@ -20,6 +20,7 @@ import { generatePONCode } from '../../utils';
 import StatusRepository from '../repositories/Status/status.repository';
 import ProductRepository from '../repositories/Product/product.repository';
 import OrderSupplierRepository from '../repositories/OrderSupplier/order-supplier.repository';
+import { where } from 'sequelize';
 
 class PurchaseOrderController implements BaseController {
   purchaseOrderRepository: PurchaseOrderRepository;
@@ -164,22 +165,113 @@ class PurchaseOrderController implements BaseController {
             importStatusId: purchaseOrderInput.statusId,
             importDate: new Date(),
           });
-          const purchaseOrder = await this.purchaseOrderRepository.findByIdOrFail(purchaseOrderId);
-          await this.purchaseOrderRepository.update(purchaseOrderId, {
-            ...purchaseOrder,
-            importStatusId: purchaseOrderInput.statusId,
-            importDate: new Date(),
-            orderSupplierId: orderSupplier.id
-          });
+          const purchaseOrder = await this.purchaseOrderRepository.findOne(
+            {
+              where: {
+                id: purchaseOrderId,
+              },
+              include: [
+                {model: PurchaseOrderProductItem, as : 'purchaseOrderProductItems'}
+              ]
+            }
+          );
+          if (purchaseOrder) {
+            const updatedPurchaseOrder = await this.purchaseOrderRepository.update(purchaseOrderId, {
+              ...purchaseOrder,
+              importStatusId: purchaseOrderInput.statusId,
+              importDate: new Date(),
+              orderSupplierId: orderSupplier.id,
+            });
+            // Update product quantity if the import status is "imported" in purchase order
+            if (updatedPurchaseOrder.importStatusId) {
+              const statusRepository = new StatusRepository();
+              const status = await statusRepository.findById(updatedPurchaseOrder.importStatusId);
+              if (status?.key === STATUSES.imported) {
+                const productRepository = new ProductRepository();
+                
+                // Extract all product IDs
+                const productIds = (purchaseOrder as any).purchaseOrderProductItems.map(
+                  (productItem: PurchaseOrderProductItem) => productItem.productId
+                );
+                
+                // Fetch all products with a single query
+                const products = await productRepository.find({
+                  where: { id: productIds }
+                });
+                
+                const updateProducts: any[] = [];
+                products.forEach((product: Product) => {
+                  const purchaseOrderItem = (purchaseOrder as any).purchaseOrderProductItems.find(
+                    (productItem: PurchaseOrderProductItem) => productItem.productId === product.id,
+                  );
+                  updateProducts.push({
+                      id: product.id,
+                      inventoryQuantity: Number(product?.inventoryQuantity ?? 0) + Number(purchaseOrderItem?.quantity ?? 0),
+                    });
+                });
+                const updatePromises = updateProducts.map((product: Product) => 
+                  productRepository.update(product.id, product)
+                );
+                await Promise.all(updatePromises);
+              }
+            }
+            
+          }
           return new SuccessResponse(res, orderSupplier);
         } else { // Import products from a normal purchase order
-          const purchaseOrder = await this.purchaseOrderRepository.findByIdOrFail(purchaseOrderId);
-          const updatedPurchaseOrder = await this.purchaseOrderRepository.update(purchaseOrderId, {
-            ...purchaseOrder,
-            importStatusId: purchaseOrderInput.statusId,
-            importDate: new Date(),
-          });
-          return new SuccessResponse(res, updatedPurchaseOrder);
+          const purchaseOrder = await this.purchaseOrderRepository.findOne(
+            {
+              where: {
+                id: purchaseOrderId,
+              },
+              include: [
+                {model: PurchaseOrderProductItem, as : 'purchaseOrderProductItems'}
+              ]
+            }
+          );
+          
+          if (purchaseOrder) {
+            const updatedPurchaseOrder = await this.purchaseOrderRepository.update(purchaseOrderId, {
+              ...purchaseOrder,
+              importStatusId: purchaseOrderInput.statusId,
+              importDate: new Date(),
+            });
+            if (updatedPurchaseOrder.importStatusId) {
+              const statusRepository = new StatusRepository();
+              const status = await statusRepository.findById(updatedPurchaseOrder.importStatusId);
+              if (status?.key === STATUSES.imported) {
+                const productRepository = new ProductRepository();
+                
+                // Extract all product IDs
+                const productIds = (purchaseOrder as any).purchaseOrderProductItems.map(
+                  (productItem: PurchaseOrderProductItem) => productItem.productId
+                );
+                
+                // Fetch all products with a single query
+                const products = await productRepository.find({
+                  where: { id: productIds }
+                });
+
+                const updateProducts: any[] = [];
+                products.forEach((product: Product) => {
+                  const purchaseOrderItem = (purchaseOrder as any).purchaseOrderProductItems.find(
+                    (productItem: PurchaseOrderProductItem) => productItem.productId === product.id,
+                  );
+                  updateProducts.push({
+                      id: product.id,
+                      inventoryQuantity: Number(product?.inventoryQuantity ?? 0) + Number(purchaseOrderItem?.quantity ?? 0),
+                    });
+                });
+                const updatePromises = updateProducts.map((product: Product) => 
+                  productRepository.update(product.id, product)
+                );
+                await Promise.all(updatePromises);
+              }
+            }
+            
+            return new SuccessResponse(res, updatedPurchaseOrder);
+          }
+          return new SuccessResponse(res, 'error');
         }
       });
     } catch (error) {
