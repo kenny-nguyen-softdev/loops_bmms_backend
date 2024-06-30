@@ -42,15 +42,17 @@ class StatisticController {
     const endDate = new Date(req.body.endDate).toLocaleDateString();
     try {
       const statusRepo = new StatusRepository();
-      const fullExportStatus = await statusRepo.findOne({ where: { key: STATUSES.fullyExported } });
-      const processOrderStatus = await statusRepo.findOne({ where: { key: STATUSES.orderProcessing } });
-      const completedOrderStatus = await statusRepo.findOne({ where: { key: STATUSES.orderCompleted } });
+      // const fullExportStatus = await statusRepo.findOne({ where: { key: STATUSES.fullyExported } });
+      // const processOrderStatus = await statusRepo.findOne({ where: { key: STATUSES.orderProcessing } });
+      // const completedOrderStatus = await statusRepo.findOne({ where: { key: STATUSES.orderCompleted } });
+      const approvedStatus = await statusRepo.findOne({ where: { key: STATUSES.approvedOrder } });
       const orders = await new OrderRepository().find({
         where: {
-          orderStatusId: {
-            [Op.or]: [completedOrderStatus?.id, processOrderStatus?.id],
-          },
-          exportedInventoryStatusId: fullExportStatus?.id,
+          // orderStatusId: {
+          //   [Op.or]: [completedOrderStatus?.id, processOrderStatus?.id],
+          // },
+          // exportedInventoryStatusId: fullExportStatus?.id,
+          approvedStatusId: approvedStatus?.id,
         },
       });
 
@@ -140,17 +142,33 @@ class StatisticController {
 
   async orderReport(req: IRequest, res: IResponse): Promise<ISuccessResponse | IErrorResponse> {
     try {
-      const { orderStatusId } = req.body;
-      const startDate = new Date(req.body.startDate).toLocaleDateString();
-      const endDate = new Date(req.body.endDate).toLocaleDateString();
+      const { orderStatusId, approvedStatusId, startDate, endDate } = req.body;
+      // const startDate = new Date(req.body.startDate).toLocaleDateString();
+      // const endDate = new Date(req.body.endDate).toLocaleDateString() + ' 23:59:59';
       const orderRepo = new OrderRepository();
-      let whereConditions = {};
-      if (orderStatusId){
-        whereConditions = {...whereConditions, orderStatusId: orderStatusId};
+      // let whereConditions = {};
+      // if (orderStatusId){
+      //   whereConditions = {...whereConditions, orderStatusId: orderStatusId};
+      // }
+      const options = {
+        where: {
+          [Op.and]: {
+            createdAt: {
+              [Op.gte]: new Date(startDate),
+              [Op.lte]: new Date(endDate + ' 23:59:59'),
+            },
+          },
+        },
+      };
+      let orOptions: any = null;
+      if (approvedStatusId) orOptions = {...orOptions, approvedStatusId};
+      if (orderStatusId) orOptions = {...orOptions, orderStatusId};
+      if (orOptions){
+        options.where = { ...options.where, ...{[Op.or]: orOptions}};
       }
-      const orders = await orderRepo.find({
-        where: whereConditions
-      });
+      
+      const orders = await orderRepo.find(options);
+      // return new SuccessResponse(res, orders);
 
       const orderByDate: { [date: string]: number } = generateDateRange(startDate, endDate);
       orders.forEach((order) => {
@@ -992,9 +1010,11 @@ class StatisticController {
           },
         },
       };
+      const approvedStatus = await new StatusRepository().findOne({ where: { key: STATUSES.approvedOrder } });
       const [orders, allReturnOrderItems] = await Promise.all([
         new OrderRepository().find({
           ...options,
+          where: { ...options.where, approvedStatusId: approvedStatus?.id },
           include: [
             {
               model: Status,

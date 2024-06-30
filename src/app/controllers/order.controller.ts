@@ -179,6 +179,18 @@ class OrderController implements BaseController {
           key: STATUSES.notApprovedOrder
         }});
         if (orderInput.approvedStatusId !== notApproveStatus?.id) {
+          
+          // Created by admin/user -> Update orderStatus to order processing
+          const orderProcessingStatus = await new StatusRepository().findOneOrFail({
+            where: {
+              key: STATUSES.orderProcessing,
+            },
+          });
+          await order.update({
+            ...order,
+            orderStatusId: orderProcessingStatus.id,
+          });
+
           const debtTypeRepository = new DebtTypeRepository();
           const customerDebtType = await debtTypeRepository.findOne({
             where: {

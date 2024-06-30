@@ -23,7 +23,7 @@ import {
   Voucher,
   Ward,
 } from '../../models';
-import { FindOptions } from 'sequelize';
+import { FindOptions, where } from 'sequelize';
 import OrderItemRepository from '../repositories/OrderItem/order-item.repository';
 import DebtRepository from '../repositories/Debt/debt.repository';
 import { Op } from 'sequelize';
@@ -273,8 +273,8 @@ class ExportPdfController {
         orderStatusId,
         paymentStatusId,
         exportedInventoryStatusId,
+        approvedStatusId,
       } = req.body;
-      const approvedOrder = await new StatusRepository().findOne({where: {key: STATUSES.approvedOrder}});
       const options = {
         where: {
           [Op.and]: {
@@ -282,7 +282,6 @@ class ExportPdfController {
               [Op.gte]: new Date(startDate),
               [Op.lte]: new Date(endDate + ' 23:59:59'),
             },
-            approvedStatusId: approvedOrder?.id,
           },
         },
         include: [
@@ -292,15 +291,16 @@ class ExportPdfController {
           },
         ],
       };
-      let orOptions: any = null;
-      if (customerId) orOptions = {...orOptions, customerId: customerId};
-      if (staffId) orOptions = {...orOptions, staffId};
-      if (orderStatusId) orOptions = {...orOptions, orderStatusId};
-      if (paymentStatusId) orOptions = {...orOptions, paymentStatusId};
-      if (exportedInventoryStatusId) orOptions = {...orOptions, exportedInventoryStatusId};
+      let andOptions: any = null;
+      if (customerId) andOptions = {...andOptions, customerId: customerId};
+      if (staffId) andOptions = {...andOptions, staffId};
+      if (orderStatusId) andOptions = {...andOptions, orderStatusId};
+      if (paymentStatusId) andOptions = {...andOptions, paymentStatusId};
+      if (exportedInventoryStatusId) andOptions = {...andOptions, exportedInventoryStatusId};
+      if (approvedStatusId) andOptions = {...andOptions, approvedStatusId};
       
-      if (orOptions){
-        options.where = { ...options.where, ...{[Op.or]: orOptions}};
+      if (andOptions){
+        options.where = { ...options.where, ...{[Op.and]: andOptions}};
       }
       const orders = await this.orderRepository.find(options);
       const orderIds: number[] = orders.map((order) => order.id);
@@ -354,18 +354,18 @@ class ExportPdfController {
           },
         ],
       };
-      let orOptions: any = null;
+      let andOptions: any = null;
       if (customerId) {
-        orOptions = { ...orOptions, customerId: customerId };
+        andOptions = { ...andOptions, customerId: customerId };
       }
       if (staffId) {
-        orOptions = { ...orOptions, staffId: staffId };
+        andOptions = { ...andOptions, staffId: staffId };
       }
       if (supplierId) {
-        orOptions = { ...orOptions, supplierId: supplierId };
+        andOptions = { ...andOptions, supplierId: supplierId };
       }
-      if (orOptions){
-        options.where = { ...options.where, ...{[Op.or]: orOptions}};
+      if (andOptions){
+        options.where = { ...options.where, ...{[Op.and]: andOptions}};
        }
 
       const vouchers = await this.voucherRepo.find(options);
@@ -392,7 +392,8 @@ class ExportPdfController {
 
   async saleProductReportPdf(req: IRequest, res: IResponse): Promise<any> {
     try {
-      const { storeInformation, startDate, endDate, orderStatusId, paymentStatusId, exportedInventoryStatusId } = req.body;
+      const { storeInformation, startDate, endDate, orderStatusId, paymentStatusId, exportedInventoryStatusId, approvedStatusId } =
+        req.body;
 
       const options = {
         where: {
@@ -411,6 +412,13 @@ class ExportPdfController {
           }
         ],
       };
+
+      let andOptions: any = null;
+      if (orderStatusId) andOptions = {...andOptions, orderStatusId};
+      if (paymentStatusId) andOptions = {...andOptions, paymentStatusId};
+      if (exportedInventoryStatusId) andOptions = {...andOptions, exportedInventoryStatusId};
+      if (approvedStatusId) andOptions = {...andOptions, approvedStatusId};
+  
 
       const [allOrderItems, returnOrderItems] = await Promise.all([
         this.orderItemRepository.find({
@@ -431,29 +439,17 @@ class ExportPdfController {
             {
               model: Order,
               as: 'order',
+              where: {
+                [Op.and]: andOptions || {
+                  id: { [Op.ne]: null },
+                },
+              },
             },
           ],
         }),
         this.returnedOrderItemRepo.find(options),
       ]);
-      const orderItems = allOrderItems.filter((orderItem) => {
-        if (orderStatusId){
-          if ((orderItem as any)?.order?.orderStatusId !== orderStatusId)
-            return false;
-        }
-        if (paymentStatusId){
-          if ((orderItem as any)?.order?.paymentStatusId !== paymentStatusId)
-            return false;
-        }
-        if (exportedInventoryStatusId){
-          if ((orderItem as any)?.order?.exportedInventoryStatusId !== exportedInventoryStatusId)
-            return false;
-        }
-        return true;
-        // (orderItem as any)?.order?.orderStatusId === orderStatusId ||
-        //   (orderItem as any)?.order?.paymentStatusId === paymentStatusId ||
-        //   (orderItem as any)?.order?.exportedInventoryStatusId === exportedInventoryStatusId;
-      });
+      const orderItems = [...allOrderItems];
       const productIds: number[] = [];
       const products: SaleProductReportType[] = [];
 
@@ -869,10 +865,17 @@ class ExportPdfController {
       ];
       const distributions = [0.05, 0.15, 0.1, 0.2, 0.12, 0.1, 0.13, 0.15];
       
+      const notApprovedOrder = await new StatusRepository().findOneOrFail({
+        where: {
+          key: STATUSES.notApprovedOrder,
+        },
+      });
+      const isCustomerOrder = order.approvedStatusId === notApprovedOrder.id ? true : false;
+      
       await this.exportPdfRepo.pdfHeader(doc, information);
       this.generateOrderInformation(doc, order);
       await this.exportPdfRepo.pdfTable(doc, headers, updateOrderItems, distributions);
-      this.generateOrderInTotal(doc, order, debts);
+      this.generateOrderInTotal(doc, order, debts, isCustomerOrder);
 
       this.exportPdfRepo.generateHr(doc, paperSize.height - paperSize.marginBottom - paperSize.marginTop);
 
@@ -1491,7 +1494,7 @@ class ExportPdfController {
       .moveDown(2);
   }
 
-  protected generateOrderInTotal(doc: PDFDocumentWithTables, order: any, debts: Debt[]) {
+  protected generateOrderInTotal(doc: PDFDocumentWithTables, order: any, debts: Debt[], isCustomerOrder: boolean) {
     // margin top + header height
     let reportInTotalTop = doc.y;
     const lableWidth = 80;
@@ -1515,12 +1518,15 @@ class ExportPdfController {
       .text('Cọc:', startX, reportInTotalTop + newLineHeight*3, {
         width: lableWidth,
         align: 'right',
-      })
+      });
+
+    !isCustomerOrder && doc
       .text('Nợ cũ:', startX, reportInTotalTop + newLineHeight * 4, {
         width: lableWidth,
         align: 'right',
-      })
-      .text('Tổng nợ:', startX, reportInTotalTop + newLineHeight * 5, {
+      });
+    doc
+      .text(isCustomerOrder ? 'Tạm tính:' : 'Tổng nợ:', startX, reportInTotalTop + newLineHeight * (!isCustomerOrder ? 5 : 4), {
         width: lableWidth,
         align: 'right',
       })
@@ -1528,9 +1534,11 @@ class ExportPdfController {
       .text(formatCurrency(Number(order.totalTaxPrice)) || '0', startX + lableWidth + 5, reportInTotalTop)
       .text(formatCurrency(Number(order.shippingFee)) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight)
       .text(formatCurrency(Number(order.totalPrice)) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight*2)
-      .text(formatCurrency(deposit) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight * 3)
-      .text(formatCurrency(oldDebt) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight * 4)
-      .text(formatCurrency(totalDebt) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight * 5)
+      .text(formatCurrency(deposit) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight * 3);
+    !isCustomerOrder && doc
+      .text(formatCurrency(oldDebt) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight * 4);
+    doc
+      .text(formatCurrency(totalDebt) || '0', startX + lableWidth + 5, reportInTotalTop + newLineHeight * (!isCustomerOrder ? 5 : 4))
       .moveDown(2);
     reportInTotalTop = doc.y + 20;
     doc
