@@ -653,7 +653,7 @@ class ExportPdfController {
 
   async financialReportPdf(req: IRequest, res: IResponse): Promise<any> {
     try {
-      const { storeInformation, startDate, endDate } = req.body;
+      const { storeInformation, startDate, endDate, orderStatusId, paymentStatusId, exportedInventoryStatusId, approvedStatusId } = req.body;
 
       let salesAmount = 0;
       let salesReturnAmount = 0;
@@ -665,6 +665,12 @@ class ExportPdfController {
       let orderIncome = 0;
       let orderCosts = 0;
 
+      let andOptions: any = null;
+      if (orderStatusId) andOptions = {...andOptions, orderStatusId};
+      if (paymentStatusId) andOptions = {...andOptions, paymentStatusId};
+      if (exportedInventoryStatusId) andOptions = {...andOptions, exportedInventoryStatusId};
+      if (approvedStatusId) andOptions = {...andOptions, approvedStatusId};
+      
       const options = {
         where: {
           [Op.and]: {
@@ -688,9 +694,11 @@ class ExportPdfController {
         ],
       };
 
+
       const [orders, orderItems, returnOrderItems, vouchers, voucherTypes] = await Promise.all([
         new OrderRepository().find({
           where: {
+            ...andOptions,
             [Op.and]: {
               createdAt: {
                 [Op.gte]: new Date(startDate),
@@ -699,8 +707,43 @@ class ExportPdfController {
             },
           },
         }),
-        new OrderItemRepository().find(options),
-        new ReturnedOrderItemRepository().find(options),
+        new OrderItemRepository().find({
+          ...options,
+          include: [
+            ...options.include,
+            {
+              model: Order,
+              as: 'order',
+              where: {
+                [Op.and]: andOptions || {
+                  id: { [Op.ne]: null },
+                },
+              },
+            },
+          ],
+        }),
+        new ReturnedOrderItemRepository().find({
+          ...options,
+          order: [['createdAt', 'ASC']],
+          include:[
+            ...options.include,
+            {
+              model: ReturnedOrder,
+              as: 'returnedOrder',
+              include: [
+                {
+                  model: Order,
+                  as: 'order',
+                  where: {
+                    [Op.and]: andOptions || {
+                      id: { [Op.ne]: null },
+                    },
+                  },
+                }
+              ]
+            },
+          ]
+        }),
         new VoucherRepository().find({
           where: {
             [Op.and]: {
@@ -717,9 +760,37 @@ class ExportPdfController {
         new VoucherTypeRepository().find(),
       ]);
 
+      const orderItemIds: number[] = [];
       orderItems.forEach((orderItem) => {
+        orderItemIds.push(Number(orderItem.productId));
         salesAmount += Number(orderItem.price) * Number(orderItem.quantity);
-        costAmount += Number((orderItem as any).product?.costPrice || 0) * Number(orderItem.quantity);
+        // costAmount += Number((orderItem as any).product?.costPrice || 0) * Number(orderItem.quantity);
+      });
+      
+      const purchaseOrderProductItems = await new PurchaseOrderProductItemRepository().find({
+        where: {
+          productId: {
+            [Op.in]: orderItemIds
+          },
+          createdAt: {
+            [Op.lte]: new Date(endDate + ' 23:59:59'),
+          },
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      orderItems.forEach((orderItem) => {
+        let isHavingCostPrice = false;
+        purchaseOrderProductItems.forEach((purchaseOrderProductItem) => {
+          if (purchaseOrderProductItem.productId === orderItem.productId && purchaseOrderProductItem.createdAt <= orderItem.createdAt) {
+            isHavingCostPrice = true;
+            costAmount += Number(purchaseOrderProductItem?.price || 0) * Number(orderItem.quantity);
+            return;
+          }
+         });
+         if (!isHavingCostPrice) {
+          costAmount += Number((orderItem as any).product?.costPrice || 0) * Number(orderItem.quantity);
+         }
       });
 
       returnOrderItems.forEach((returnOrderItem) => {
@@ -746,10 +817,10 @@ class ExportPdfController {
       });
 
       const result = {
-        saleRevenue: salesAmount + salesReturnAmount + deliveryFee - discount,
+        saleRevenue: (salesAmount - salesReturnAmount) + vat + deliveryFee - discount,
         actualSalesAmount: salesAmount - salesReturnAmount,
-        salesAmount: salesAmount,
-        salesReturnAmount: salesReturnAmount,
+          salesAmount: salesAmount,
+          salesReturnAmount: salesReturnAmount,
         vat: vat,
         deliveryFee: deliveryFee,
         discount: discount,
@@ -1263,7 +1334,7 @@ class ExportPdfController {
         };
         financialData.push(data);
       });
-      financialData[financialData.length - 1].value = result.saleRevenue + result.orderIncome - result.salesExpenses - result.orderCosts;
+      financialData[financialData.length - 1].value = formatCurrency(result.saleRevenue + result.orderIncome - result.salesExpenses - result.orderCosts);
       const headers = ['Chỉ tiêu báo cáo', 'Kỳ hiện tại'];
       const distributions = [0.5, 0.5];
       const title = 'BÁO CÁO KẾT QUẢ TÀI CHÍNH KINH DOANH';
@@ -1327,14 +1398,14 @@ class ExportPdfController {
       .text(order.customer.name, paperSize.marginLeft + lableWidth + 5, reportInformationTop)
       .text(order.customer.phoneNumber, paperSize.marginLeft + lableWidth + 5, reportInformationTop + newLineHeight * 1)
       .text(order.customer.email, paperSize.marginLeft + lableWidth + 5, reportInformationTop + newLineHeight * 2)
-      .text(order.customer.address, paperSize.marginLeft + lableWidth + 5, reportInformationTop + newLineHeight * 3)
+      .text(order.note === '' ? order.customer.address : order.note, paperSize.marginLeft + lableWidth + 5, reportInformationTop + newLineHeight * 3)
       .text(order.code, (paperSize.usableWidth / 3) * 2 + lableWidth + 5, reportInformationTop)
       .text(
         order.createdAt.toLocaleDateString(),
         (paperSize.usableWidth / 3) * 2 + lableWidth + 5,
         reportInformationTop + newLineHeight,
       )
-      .text(order.note, paperSize.marginLeft + lableWidth + 5, reportInformationTop + newLineHeight * 5)
+      .text('', paperSize.marginLeft + lableWidth + 5, reportInformationTop + newLineHeight * 5)
       .moveDown(2);
   }
 

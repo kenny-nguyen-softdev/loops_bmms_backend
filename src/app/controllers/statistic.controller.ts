@@ -393,9 +393,36 @@ class StatisticController {
         new VoucherTypeRepository().find(),
       ]);
 
+      const orderItemIds: number[] = [];
       orderItems.forEach((orderItem) => {
+        orderItemIds.push(Number(orderItem.productId));
         salesAmount += Number(orderItem.price) * Number(orderItem.quantity);
-        costAmount += Number((orderItem as any).product?.costPrice || 0) * Number(orderItem.quantity);
+      });
+
+      const purchaseOrderProductItems = await new PurchaseOrderProductItemRepository().find({
+        where: {
+          productId: {
+            [Op.in]: orderItemIds
+          },
+          createdAt: {
+            [Op.lte]: new Date(endDate + ' 23:59:59'),
+          },
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      orderItems.forEach((orderItem) => {
+        let isHavingCostPrice = false;
+        purchaseOrderProductItems.forEach((purchaseOrderProductItem) => {
+          if (purchaseOrderProductItem.productId === orderItem.productId && purchaseOrderProductItem.createdAt <= orderItem.createdAt) {
+            isHavingCostPrice = true;
+            costAmount += Number(purchaseOrderProductItem?.price || 0) * Number(orderItem.quantity);
+            return;
+          }
+         });
+         if (!isHavingCostPrice) {
+          costAmount += Number((orderItem as any).product?.costPrice || 0) * Number(orderItem.quantity);
+         }
       });
 
       returnOrderItems.forEach((returnOrderItem) => {
