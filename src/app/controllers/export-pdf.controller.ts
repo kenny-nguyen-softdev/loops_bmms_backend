@@ -1313,7 +1313,7 @@ class ExportPdfController {
       const values = Object.values(result);
       const names = [
         'I. Doanh thu bán hàng (1 + 2 + 3 - 4)',
-        '     1. Tiền hàng thực bán (1a + 1b)',
+        '     1. Tiền hàng thực bán (1a - 1b)',
         '           a. Tiền bán hàng ra',
         '           b. Tiền bán hàng trả lại',
         '     2. Thuế GTGT',
